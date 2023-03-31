@@ -11,7 +11,7 @@ jobs:
     name: test Rust
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
 
       - name: Run test
         run: cargo test --all -- --nocapture
@@ -21,24 +21,23 @@ jobs:
     name: fmt Rust
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - run: rustup component add rustfmt
 
       - name: Run fmt
         run: cargo fmt --all -- --check
         working-directory: discord-bot
 
-  # clipy:
-  #   name: clipy Rust
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - name: checkout sources and add clipy
-  #       uses: actions/checkout@v2
-  #       run: rustup component add clipy
+  clipy:
+    name: clipy Rust
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - run: rustup component add clipy
 
-  #     - name: Run clipy
-  #       run: cargo clippy --all-targets --all-features-- -D warnings
-  #       working-directory: discord-bot
+      - name: Run clipy
+        run: cargo clippy --all-targets --all-features-- -D warnings
+        working-directory: discord-bot
 
 
 
