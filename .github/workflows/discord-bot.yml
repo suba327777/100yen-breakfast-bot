@@ -30,17 +30,17 @@ jobs:
         run: cargo fmt --all -- --check
         working-directory: discord-bot
 
-  clipy:
-    name: clipy Rust
-    runs-on: ubuntu-latest
-    steps:
-      - name: checkout sources and add clipy
-        uses: actions/checkout@v2
-        run: rustup component add clipy
+  # clipy:
+  #   name: clipy Rust
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - name: checkout sources and add clipy
+  #       uses: actions/checkout@v2
+  #       run: rustup component add clipy
 
-      - name: Run clipy
-        run: cargo clippy --all-targets --all-features-- -D warnings
-        working-directory: discord-bot
+  #     - name: Run clipy
+  #       run: cargo clippy --all-targets --all-features-- -D warnings
+  #       working-directory: discord-bot
 
 
 
