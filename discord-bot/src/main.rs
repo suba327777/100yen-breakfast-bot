@@ -1,6 +1,6 @@
 use dotenvy::dotenv;
 use serenity::async_trait;
-use serenity::framework::standard::macros::{command, group};
+use serenity::framework::standard::macros::group;
 use serenity::framework::standard::StandardFramework;
 use serenity::model::channel::Message;
 use serenity::model::gateway::Ready;
@@ -33,7 +33,7 @@ impl EventHandler for Handler {
 
 #[tokio::main]
 async fn main() {
-    dotenv();
+    dotenv().ok();
     let token = env::var("DISCORD_TOKEN").expect("Expected a token in the env");
 
     let framework = StandardFramework::new()
@@ -49,4 +49,9 @@ async fn main() {
     if let Err(why) = client.start().await {
         println!("client error {:?}", why);
     }
+}
+
+#[test]
+fn testcase() {
+    assert_eq!(2 + 2, 4)
 }
