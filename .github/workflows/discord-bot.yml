@@ -23,7 +23,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: checkout sources and add rustfmt
-        uses: actions/checkout@v3
+        uses: actions/checkout@v2
         run: rustup component add rustfmt
 
       - name: Run fmt
@@ -35,7 +35,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: checkout sources and add clipy
-        uses: actions/checkout@v3
+        uses: actions/checkout@v2
         run: rustup component add clipy
 
       - name: Run clipy
