@@ -8,12 +8,25 @@ on:
 
 jobs:
   test:
-    name: Test Rust
+    name: test Rust
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout sources
+      - name: checkout sources
         uses: actions/checkout@v2
 
-      - name: Run cargo test
+      - name: Run test
         run: cargo test --all -- --nocapture
         working-directory: discord-bot
+
+  fmt:
+    name: fmt Rust
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout sources and add rustfmt
+        uses: actions/checkout@v3
+        run: rustup component add rustfmt
+
+      - name: Run fmt
+        run: cargo fmt --all -- --check
+        working-directory: discord-bot
+
