@@ -50,3 +50,8 @@ async fn main() {
         println!("client error {:?}", why);
     }
 }
+
+#[test]
+fn testcase() {
+    assert_eq!(2 + 2, 4)
+}
