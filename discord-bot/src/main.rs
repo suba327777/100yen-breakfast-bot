@@ -1,3 +1,5 @@
+mod commands;
+use commands::neko::*;
 use dotenvy::dotenv;
 use serenity::async_trait;
 use serenity::framework::standard::macros::group;
@@ -8,6 +10,8 @@ use serenity::prelude::*;
 use std::env;
 
 #[group]
+#[summary("一般")]
+#[commands(neko)]
 struct General;
 
 struct Handler;
@@ -40,7 +44,11 @@ async fn main() {
         .configure(|c| c.prefix("~")) // set the bot's prefix to "~"
         .group(&GENERAL_GROUP);
 
-    let mut client = Client::builder(&token)
+    let intents = GatewayIntents::GUILD_MESSAGES
+        | GatewayIntents::DIRECT_MESSAGES
+        | GatewayIntents::MESSAGE_CONTENT;
+
+    let mut client = Client::builder(&token, intents)
         .event_handler(Handler)
         .framework(framework)
         .await
