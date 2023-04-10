@@ -1,8 +1,5 @@
 use chrono::{Duration, Utc};
-use google_calendar3::api::Event;
-use google_calendar3::CalendarHub;
-// use hyper;
-// use hyper_rustls;
+use dotenvy::dotenv;
 use jsonwebtoken::{encode, Algorithm, EncodingKey, Header};
 use reqwest::blocking::Client;
 use serde::{Deserialize, Serialize};
@@ -10,9 +7,9 @@ use serde_json::{json, Value};
 use serenity::framework::standard::{macros::command, CommandResult};
 use serenity::model::prelude::*;
 use serenity::prelude::*;
+use std::env;
 use std::fs::File;
 use std::io::BufReader;
-use yup_oauth2::{read_service_account_key, ServiceAccountAuthenticator};
 
 const FILE_NAME: &str = "credentials.json";
 const SCOPE: &str = "https://www.googleapis.com/auth/calendar";
@@ -39,34 +36,28 @@ struct Claims {
     iat: i64,
 }
 
-async fn fetch_token() -> String {
+impl Claims {
+    fn new(client_email: String, token_uri: String) -> Self {
+        //generate timestamps of JWT issue time and expiration date
+        let now = Utc::now();
+        let iat = now.timestamp();
+        let exp = (now + Duration::minutes(60)).timestamp();
+
+        Claims {
+            iss: client_email,
+            scope: SCOPE.to_string(),
+            aud: token_uri,
+            iat,
+            exp,
+        }
+    }
+}
+
+async fn fetch_access_token() -> String {
     let file = File::open(FILE_NAME).unwrap();
-
     let credential: Credential = serde_json::from_reader(BufReader::new(file)).unwrap();
-
-    //generate timestamps of JWT issue time and expiration date
-    let now = Utc::now();
-    let iat = now.timestamp();
-    let exp = (now + Duration::minutes(60)).timestamp();
-
-    let mut header = Header::default();
-    header.typ = Some("JWT".to_string());
-    header.alg = Algorithm::RS256;
-
-    let claims = Claims {
-        iss: credential.client_email,
-        scope: SCOPE.to_string(),
-        aud: credential.token_uri,
-        exp,
-        iat,
-    };
-
-    let jwt = encode(
-        &header,
-        &claims,
-        &EncodingKey::from_rsa_pem(credential.private_key.as_bytes()).unwrap(),
-    )
-    .unwrap();
+    let token_uri = credential.token_uri.clone();
+    let jwt = generate_jwt(credential);
 
     let token_body = json!({
         "grant_type":"urn:ietf:params:oauth:grant-type:jwt-bearer",
@@ -74,7 +65,7 @@ async fn fetch_token() -> String {
     });
 
     let token_response = Client::new()
-        .post(&claims.aud)
+        .post(&token_uri)
         .json(&token_body)
         .send()
         .unwrap();
@@ -89,20 +80,42 @@ async fn fetch_token() -> String {
     return access_token.to_string();
 }
 
+fn generate_jwt(credential: Credential) -> String {
+    let claims = Claims::new(credential.client_email, credential.token_uri);
+
+    let mut header = Header::default();
+    header.typ = Some("JWT".to_string());
+    header.alg = Algorithm::RS256;
+
+    return encode(
+        &header,
+        &claims,
+        &EncodingKey::from_rsa_pem(credential.private_key.as_bytes()).unwrap(),
+    )
+    .unwrap();
+}
+
 #[command]
 #[description = "fetch schedule week"]
 async fn fetch_schedule(ctx: &Context, msg: &Message) -> CommandResult {
-    let token = fetch_token().await;
+    dotenv().ok();
+    let acces_token = fetch_access_token().await;
+    let calendar_id = env::var("CALEANDAR_ID").expect("Expected a calendarId in the env");
+
+    let response = Client::new()
+        .get(&format!(
+            "https://www.googleapis.com/calendar/v3/calendars/{}/events",
+            calendar_id
+        ))
+        .bearer_auth(acces_token)
+        .send()
+        .unwrap();
+
+    println!("{:?}", response);
+    println!("{:?}", response.text());
     msg.channel_id
         .say(&ctx.http, format!("カレンダーだよーん",))
         .await?;
 
     Ok(())
 }
-// let hub = CalendarHub::new(
-//     hyper::Client::builder().build(hyper_rustls::HttpsConnector::with_native_roots),
-//     key,
-// );
-
-// let google_calendar = client::new(string::from(),String::from()
-// Client::new();
