@@ -1,6 +1,6 @@
 use chrono::{Duration, Utc};
 use jsonwebtoken::{encode, Algorithm, EncodingKey, Header};
-use reqwest::blocking::Client;
+use reqwest::Client;
 use serde::{Deserialize, Serialize};
 use serde_json::{json, Value};
 use std::fs::File;
@@ -63,9 +63,10 @@ pub async fn fetch_access_token() -> String {
         .post(&token_uri)
         .json(&token_body)
         .send()
+        .await
         .unwrap();
 
-    let token_response_body: Value = token_response.json().unwrap();
+    let token_response_body: Value = token_response.json().await.unwrap();
     let access_token = token_response_body
         .get("access_token")
         .unwrap()
