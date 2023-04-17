@@ -1,31 +1,18 @@
-use crate::google::auth::fetch_access_token;
-use dotenvy::dotenv;
-use reqwest::blocking::Client;
+use crate::google::event::{fetch_schedule, CalendarEvent};
 use serenity::framework::standard::{macros::command, CommandResult};
 use serenity::model::prelude::*;
 use serenity::prelude::*;
-use std::env;
 
 #[command]
 #[description = "fetch schedule week"]
-async fn fetch_schedule(ctx: &Context, msg: &Message) -> CommandResult {
-    dotenv().ok();
-    let acces_token = fetch_access_token().await;
-    let calendar_id = env::var("CALEANDAR_ID").expect("Expected a calendarId in the env");
+async fn sch(ctx: &Context, msg: &Message) -> CommandResult {
+    let event_message: String = fetch_schedule().await;
 
-    let response = Client::new()
-        .get(&format!(
-            "https://www.googleapis.com/calendar/v3/calendars/{}/events",
-            calendar_id
-        ))
-        .bearer_auth(acces_token)
-        .send()
-        .unwrap();
-
-    println!("{:?}", response);
-    println!("{:?}", response.text());
     msg.channel_id
-        .say(&ctx.http, format!("カレンダーだよーん",))
+        .say(
+            &ctx.http,
+            format!("日程はこちらになるよ！\n{}", event_message),
+        )
         .await?;
 
     Ok(())
