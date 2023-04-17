@@ -11,24 +11,24 @@ pub struct CalendarEvent {
 }
 
 #[derive(Debug, Serialize, Deserialize)]
-#[allow(clippy::all)]
+#[serde(rename_all = "camelCase")]
 pub struct EventItem {
     summary: String,
-    OriginalStartTime: Option<OriginalStartTime>,
+    original_start_time: Option<OriginalStartTime>,
     start: EventItemPeriod,
     end: EventItemPeriod,
 }
 
 #[derive(Debug, Serialize, Deserialize)]
-#[allow(clippy::all)]
+#[serde(rename_all = "camelCase")]
 struct OriginalStartTime {
-    dateTime: String,
+    date_time: String,
 }
 
 #[derive(Debug, Serialize, Deserialize)]
-#[allow(clippy::all)]
+#[serde(rename_all = "camelCase")]
 struct EventItemPeriod {
-    dateTime: Option<String>,
+    date_time: Option<String>,
     date: Option<String>,
 }
 
@@ -63,7 +63,7 @@ pub async fn fetch_schedule() -> String {
     let mut event_message = String::new();
 
     for event in events.items {
-        let start_time = match event.start.dateTime {
+        let start_time = match event.start.date_time {
             Some(d) => d.to_string(),
             None => event.start.date.as_ref().unwrap().to_string(),
         };
