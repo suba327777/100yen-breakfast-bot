@@ -11,7 +11,7 @@ async fn sch(ctx: &Context, msg: &Message) -> CommandResult {
     msg.channel_id
         .say(
             &ctx.http,
-            format!("日程はこちらになるよ！\n{}", event_message),
+            format!("予定されている日程はこちらになるよ！\n{}", event_message),
         )
         .await?;
 
