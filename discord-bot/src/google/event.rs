@@ -75,3 +75,18 @@ pub async fn fetch_schedule() -> String {
 
     event_message
 }
+
+#[cfg(test)]
+mod tests {
+
+    use super::*;
+
+    #[tokio::test]
+    async fn test_fetch_schedule() {
+        env::set_var("CALENDAR_ID", "test_calendar_id");
+
+        let result: String = fetch_schedule().await;
+
+        assert!(result.len() > 0);
+    }
+}
