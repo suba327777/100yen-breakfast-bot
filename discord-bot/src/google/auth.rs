@@ -88,3 +88,25 @@ fn generate_jwt(credential: Credential) -> String {
     )
     .unwrap();
 }
+
+#[cfg(test)]
+mod tests {
+
+    use super::*;
+
+    const TEST_FILE_NAME: &str = "test_credential.json";
+    const TEST_CREDENTIAL_JSON: &str = r#"{
+        "client_email": "test@exsample.com",
+        "token_uri": "https://exsample.com/token",
+        "private_key": "test_private_key"
+    }"#;
+
+    #[tokio::test]
+    async fn test_fetch_access_token() {
+        std::fs::write(TEST_FILE_NAME, TEST_CREDENTIAL_JSON).unwrap();
+
+        let access_token: String = fetch_access_token().await;
+
+        assert!(access_token.len() > 0);
+    }
+}
