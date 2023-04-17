@@ -1,4 +1,4 @@
-use crate::google::event::{fetch_schedule, CalendarEvent};
+use crate::google::event::fetch_schedule;
 use serenity::framework::standard::{macros::command, CommandResult};
 use serenity::model::prelude::*;
 use serenity::prelude::*;

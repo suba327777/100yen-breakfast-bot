@@ -67,21 +67,19 @@ pub async fn fetch_access_token() -> String {
         .unwrap();
 
     let token_response_body: Value = token_response.json().await.unwrap();
-    let access_token = token_response_body
-        .get("access_token")
-        .unwrap()
-        .as_str()
-        .unwrap();
+    let access_token = token_response_body.get("access_token").unwrap();
 
-    return access_token.to_string();
+    access_token.to_string()
 }
 
 fn generate_jwt(credential: Credential) -> String {
     let claims = Claims::new(credential.client_email, credential.token_uri);
 
-    let mut header = Header::default();
-    header.typ = Some("JWT".to_string());
-    header.alg = Algorithm::RS256;
+    let header = Header {
+        typ: Some("JWT".to_string()),
+        alg: Algorithm::RS256,
+        ..Default::default()
+    };
 
     return encode(
         &header,

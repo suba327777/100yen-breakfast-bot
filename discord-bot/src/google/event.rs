@@ -11,6 +11,7 @@ pub struct CalendarEvent {
 }
 
 #[derive(Debug, Serialize, Deserialize)]
+#[allow(clippy::all)]
 pub struct EventItem {
     summary: String,
     OriginalStartTime: Option<OriginalStartTime>,
@@ -19,11 +20,13 @@ pub struct EventItem {
 }
 
 #[derive(Debug, Serialize, Deserialize)]
+#[allow(clippy::all)]
 struct OriginalStartTime {
     dateTime: String,
 }
 
 #[derive(Debug, Serialize, Deserialize)]
+#[allow(clippy::all)]
 struct EventItemPeriod {
     dateTime: Option<String>,
     date: Option<String>,
@@ -70,5 +73,5 @@ pub async fn fetch_schedule() -> String {
         event_message.push_str(&event_info);
     }
 
-    return event_message;
+    event_message
 }

@@ -5,7 +5,6 @@ use dotenvy::dotenv;
 use serenity::async_trait;
 use serenity::framework::standard::macros::group;
 use serenity::framework::standard::StandardFramework;
-use serenity::model::channel::Message;
 use serenity::model::gateway::Ready;
 use serenity::prelude::*;
 use std::env;
