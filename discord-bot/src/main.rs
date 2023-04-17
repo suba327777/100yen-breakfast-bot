@@ -1,5 +1,6 @@
 mod commands;
-use commands::neko::*;
+mod google;
+use commands::calendar::*;
 use dotenvy::dotenv;
 use serenity::async_trait;
 use serenity::framework::standard::macros::group;
@@ -10,26 +11,14 @@ use serenity::prelude::*;
 use std::env;
 
 #[group]
-#[summary("一般")]
-#[commands(neko)]
+#[summary("general")]
+#[commands(sch)]
 struct General;
 
 struct Handler;
 
 #[async_trait]
 impl EventHandler for Handler {
-    async fn message(&self, ctx: Context, msg: Message) {
-        if msg.content == "!ping" {
-            if let Err(why) = msg
-                .channel_id
-                .say(&ctx.http, format!("{} Pong!", msg.author.mention()))
-                .await
-            {
-                println!("err sending message:{:?}", why)
-            }
-        }
-    }
-
     async fn ready(&self, _: Context, ready: Ready) {
         println!("{} is connected", ready.user.name);
     }
@@ -41,7 +30,7 @@ async fn main() {
     let token = env::var("DISCORD_TOKEN").expect("Expected a token in the env");
 
     let framework = StandardFramework::new()
-        .configure(|c| c.prefix("~")) // set the bot's prefix to "~"
+        .configure(|c| c.prefix("!")) // set the bot's prefix to "!"
         .group(&GENERAL_GROUP);
 
     let intents = GatewayIntents::GUILD_MESSAGES
