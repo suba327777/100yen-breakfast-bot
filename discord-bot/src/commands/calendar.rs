@@ -4,7 +4,7 @@ use serenity::model::prelude::*;
 use serenity::prelude::*;
 
 #[command]
-#[description = "fetch schedule week"]
+#[description = "fetch schedule from google calendar"]
 async fn sch(ctx: &Context, msg: &Message) -> CommandResult {
     let event_message: String = fetch_schedule().await;
 
