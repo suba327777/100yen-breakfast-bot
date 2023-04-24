@@ -77,7 +77,7 @@ pub async fn fetch_schedule() -> String {
 fn get_event_message(events: CalendarEvent) -> String {
     let mut event_message = "予定されている日程はこちらになるよ!\n".to_string();
 
-    if events.items.len() > 0 {
+    if !events.items.is_empty() {
         for event in events.items {
             let start_time = match event.start.date_time {
                 Some(d) => format_date(d.to_string(), EventTime::Start),

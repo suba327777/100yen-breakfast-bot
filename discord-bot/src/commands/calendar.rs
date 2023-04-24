@@ -9,7 +9,7 @@ async fn sch(ctx: &Context, msg: &Message) -> CommandResult {
     let event_message: String = fetch_schedule().await;
 
     msg.channel_id
-        .say(&ctx.http, format!("{}", event_message))
+        .say(&ctx.http, event_message.to_string())
         .await?;
 
     Ok(())
