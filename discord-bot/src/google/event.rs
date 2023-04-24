@@ -1,4 +1,6 @@
 use crate::google::auth::fetch_access_token;
+use crate::utils::date::date_now_jst;
+use crate::utils::format::format_date;
 use dotenvy::dotenv;
 use reqwest::header;
 use reqwest::ClientBuilder;
@@ -32,7 +34,12 @@ pub struct EventItemPeriod {
     pub date: Option<String>,
 }
 
-pub async fn fetch_schedule() -> CalendarEvent {
+pub enum EventTime {
+    Start,
+    End,
+}
+
+pub async fn fetch_schedule() -> String {
     dotenv().ok();
     let acces_token = fetch_access_token().await;
     let calendar_id = env::var("CALEANDAR_ID").expect("Expected a calendarId in the env");
@@ -51,6 +58,12 @@ pub async fn fetch_schedule() -> CalendarEvent {
             "https://www.googleapis.com/calendar/v3/calendars/{}/events",
             calendar_id
         ))
+        .query(&[
+            ("timeZone", "jst"),
+            ("timeMin", &date_now_jst().to_rfc3339()),
+            ("singleEvents", "true"),
+            ("orderBy", "startTime"),
+        ])
         .send()
         .await
         .unwrap()
@@ -58,5 +71,24 @@ pub async fn fetch_schedule() -> CalendarEvent {
         .await
         .unwrap();
 
-    serde_json::from_str(&response).unwrap()
+    get_event_message(serde_json::from_str(&response).unwrap())
+}
+
+fn get_event_message(events: CalendarEvent) -> String {
+    let mut event_message = "予定されている日程はこちらになるよ!\n".to_string();
+
+    if !events.items.is_empty() {
+        for event in events.items {
+            let start_time = format_date(event.start.date_time.unwrap(), EventTime::Start);
+            let end_time = format_date(event.end.date_time.unwrap(), EventTime::End);
+
+            let event_info = format!("{} ~ {}\n", start_time, end_time);
+
+            event_message.push_str(&event_info);
+        }
+    } else {
+        event_message = "予定は入っていないみたいです😢".to_string();
+    }
+
+    event_message
 }
