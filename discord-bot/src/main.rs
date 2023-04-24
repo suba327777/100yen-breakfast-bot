@@ -1,5 +1,6 @@
 mod commands;
 mod google;
+mod utils;
 use commands::calendar::*;
 use dotenvy::dotenv;
 use serenity::async_trait;
