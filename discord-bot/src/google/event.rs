@@ -1,4 +1,5 @@
 use crate::google::auth::fetch_access_token;
+use crate::utils::date::jst_date_now;
 use dotenvy::dotenv;
 use reqwest::header;
 use reqwest::ClientBuilder;
@@ -43,6 +44,8 @@ pub async fn fetch_schedule() -> CalendarEvent {
         header::HeaderValue::from_str(&format!("OAuth {}", acces_token)).unwrap(),
     );
 
+    let jst_now = jst_date_now();
+
     let response = ClientBuilder::new()
         .default_headers(headers)
         .build()
@@ -51,12 +54,20 @@ pub async fn fetch_schedule() -> CalendarEvent {
             "https://www.googleapis.com/calendar/v3/calendars/{}/events",
             calendar_id
         ))
+        .query(&[
+            ("timeZone", "jst"),
+            ("timeMin", &jst_now.to_rfc3339()),
+            ("singleEvents", "true"),
+            ("orderBy", "startTime"),
+        ])
         .send()
         .await
         .unwrap()
         .text()
         .await
         .unwrap();
+
+    println!("{:?}", &response);
 
     serde_json::from_str(&response).unwrap()
 }
