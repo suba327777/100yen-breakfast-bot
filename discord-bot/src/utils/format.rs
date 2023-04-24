@@ -1,18 +1,11 @@
-use crate::google::event::CalendarEvent;
+use crate::google::event::EventTime;
+use chrono::DateTime;
 
-pub fn date(events: CalendarEvent) -> String {
-    let mut event_message = String::new();
+pub fn format_date(date_time: String, event_time: EventTime) -> String {
+    let parse_date_time = DateTime::parse_from_rfc3339(&date_time).unwrap();
 
-    for event in events.items {
-        let start_time = match event.start.date_time {
-            Some(d) => d.to_string(),
-            None => event.start.date.as_ref().unwrap().to_string(),
-        };
-
-        let event_info = format!("{}\n", start_time);
-
-        event_message.push_str(&event_info);
+    match event_time {
+        EventTime::Start => parse_date_time.format("%m月%d日 %H時%M分").to_string(),
+        EventTime::End => parse_date_time.format("%H時%M分").to_string(),
     }
-
-    event_message
 }
