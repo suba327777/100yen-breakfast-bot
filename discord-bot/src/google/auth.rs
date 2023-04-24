@@ -67,9 +67,8 @@ pub async fn fetch_access_token() -> String {
         .unwrap();
 
     let token_response_body: Value = token_response.json().await.unwrap();
-    let access_token = token_response_body.get("access_token").unwrap();
 
-    access_token.to_string()
+    token_response_body.get("access_token").unwrap().to_string()
 }
 
 fn generate_jwt(credential: Credential) -> String {
@@ -93,20 +92,22 @@ fn generate_jwt(credential: Credential) -> String {
 mod tests {
 
     use super::*;
+    use std::fs;
 
     const TEST_FILE_NAME: &str = "test_credential.json";
     const TEST_CREDENTIAL_JSON: &str = r#"{
         "client_email": "test@exsample.com",
         "token_uri": "https://exsample.com/token",
-        "private_key": "test_private_key"
-    }"#;
+        "private_key": "test_private_key" }"#;
 
     #[tokio::test]
     async fn test_fetch_access_token() {
-        std::fs::write(TEST_FILE_NAME, TEST_CREDENTIAL_JSON).unwrap();
+        fs::write(TEST_FILE_NAME, TEST_CREDENTIAL_JSON).unwrap();
 
         let access_token: String = fetch_access_token().await;
 
         assert!(access_token.len() > 0);
+
+        fs::remove_file(TEST_FILE_NAME).unwrap();
     }
 }

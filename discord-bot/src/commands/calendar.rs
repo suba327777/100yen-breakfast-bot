@@ -1,4 +1,5 @@
-use crate::google::event::fetch_schedule;
+use crate::google::event::{fetch_schedule, CalendarEvent};
+use crate::utils::format::date;
 use serenity::framework::standard::{macros::command, CommandResult};
 use serenity::model::prelude::*;
 use serenity::prelude::*;
@@ -6,7 +7,9 @@ use serenity::prelude::*;
 #[command]
 #[description = "fetch schedule week"]
 async fn sch(ctx: &Context, msg: &Message) -> CommandResult {
-    let event_message: String = fetch_schedule().await;
+    let event: CalendarEvent = fetch_schedule().await;
+
+    let event_message = date(event);
 
     msg.channel_id
         .say(
