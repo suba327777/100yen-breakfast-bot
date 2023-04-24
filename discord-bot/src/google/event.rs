@@ -79,17 +79,8 @@ fn get_event_message(events: CalendarEvent) -> String {
 
     if !events.items.is_empty() {
         for event in events.items {
-            let start_time = match event.start.date_time {
-                Some(d) => format_date(d.to_string(), EventTime::Start),
-                None => format_date(
-                    event.start.date.as_ref().unwrap().to_string(),
-                    EventTime::Start,
-                ),
-            };
-            let end_time = match event.end.date_time {
-                Some(d) => format_date(d.to_string(), EventTime::End),
-                None => format_date(event.end.date.as_ref().unwrap().to_string(), EventTime::End),
-            };
+            let start_time = format_date(event.start.date_time.unwrap(), EventTime::Start);
+            let end_time = format_date(event.end.date_time.unwrap(), EventTime::End);
 
             let event_info = format!("{} ~ {}\n", start_time, end_time);
 
