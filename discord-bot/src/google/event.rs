@@ -50,8 +50,6 @@ pub async fn fetch_schedule() -> String {
         header::HeaderValue::from_str(&format!("OAuth {}", acces_token)).unwrap(),
     );
 
-    let jst_now = date_now_jst();
-
     let response = ClientBuilder::new()
         .default_headers(headers)
         .build()
@@ -62,7 +60,7 @@ pub async fn fetch_schedule() -> String {
         ))
         .query(&[
             ("timeZone", "jst"),
-            ("timeMin", &jst_now.to_rfc3339()),
+            ("timeMin", &date_now_jst().to_rfc3339()),
             ("singleEvents", "true"),
             ("orderBy", "startTime"),
         ])
