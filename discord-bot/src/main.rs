@@ -2,6 +2,7 @@ mod commands;
 mod google;
 mod utils;
 use commands::calendar::*;
+use commands::role::*;
 use dotenvy::dotenv;
 use serenity::async_trait;
 use serenity::framework::standard::macros::group;
@@ -12,7 +13,7 @@ use std::env;
 
 #[group]
 #[summary("general")]
-#[commands(sch)]
+#[commands(sch, create_role)]
 struct General;
 
 struct Handler;
@@ -34,6 +35,8 @@ async fn main() {
         .group(&GENERAL_GROUP);
 
     let intents = GatewayIntents::GUILD_MESSAGES
+        | GatewayIntents::GUILDS
+        | GatewayIntents::GUILD_MEMBERS
         | GatewayIntents::DIRECT_MESSAGES
         | GatewayIntents::MESSAGE_CONTENT;
 
