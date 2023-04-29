@@ -13,7 +13,7 @@ use std::env;
 
 #[group]
 #[summary("general")]
-#[commands(sch, create_role)]
+#[commands(sch, create_role, add_role)]
 struct General;
 
 struct Handler;
