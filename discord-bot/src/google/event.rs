@@ -1,6 +1,5 @@
 use crate::google::auth::fetch_access_token;
-use crate::utils::date::date_now_jst;
-use crate::utils::format::format_date;
+use crate::utils::{date::date_now_jst, format::format_date};
 use dotenvy::dotenv;
 use reqwest::header;
 use reqwest::ClientBuilder;
