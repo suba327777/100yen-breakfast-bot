@@ -1,12 +1,8 @@
-mod commands;
-mod google;
-mod utils;
-use commands::calendar::*;
-use commands::role::*;
+use commands::{calendar::*, role::*};
+use discord_bot_rust::commands;
 use dotenvy::dotenv;
 use serenity::async_trait;
-use serenity::framework::standard::macros::group;
-use serenity::framework::standard::StandardFramework;
+use serenity::framework::standard::{macros::group, StandardFramework};
 use serenity::model::gateway::Ready;
 use serenity::prelude::*;
 use std::env;
